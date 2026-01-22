@@ -68,7 +68,7 @@ It features a **real-time editor**, **instant preview**, and **PDF export**, mak
 ## 🚀 How to Use
 
 ### ▶️ Open the Application
-- Open [WeddingFlow](https://lionkiller616.github.io/WeddingFlow/) in any modern web browser
+- Open [WeddingFlow](https://uxle.github.io/WeddingFlow/) in any modern web browser
 
 ### ✏️ Edit Details
 - Use sidebar tabs:
