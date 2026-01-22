@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WeddingFlow | Single Card Edition</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Great+Vibes&family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@400;700&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- PDF Lib -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body class="mode-edit">
+
+    <!-- Header / Navigation -->
+    <header class="header">
+        <div class="brand">
+            <i class="fa-solid fa-heart"></i>
+            <span class="brand-text">WeddingFlow</span>
+        </div>
+
+        <!-- Mobile View Switcher -->
+        <div class="view-switch">
+            <div class="v-btn active" onclick="setMode('edit')"><i class="fa-solid fa-pen-to-square"></i> </div>
+            <div class="v-btn" onclick="setMode('preview')"><i class="fa-solid fa-eye"></i> </div>
+        </div>
+
+        <!-- Desktop Controls -->
+        <div class="controls">
+            <!-- New: Explicit JSON Controls in HTML -->
+            <button class="icon-btn" onclick="saveData()" title="Save JSON (Ctrl+S)">
+                <i class="fa-solid fa-floppy-disk"></i>
+            </button>
+            <button class="icon-btn" onclick="loadData()" title="Load JSON (Ctrl+O)">
+                <i class="fa-solid fa-folder-open"></i>
+            </button>
+            
+            <div class="sep"></div>
+
+            <button class="icon-btn" onclick="toggleTheme()" title="Toggle Dark Mode">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <button class="icon-btn primary" onclick="downloadPDF()" title="Download PDF">
+                <i class="fa-solid fa-download"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="workspace">
+        <!-- Sidebar Editor -->
+        <aside>
+            <nav class="tabs-nav">
+                <div class="tab-btn active" onclick="switchTab('tab-setup')">Top</div>
+                <div class="tab-btn" onclick="switchTab('tab-couple')">Couple</div>
+                <div class="tab-btn" onclick="switchTab('tab-events')">Events</div>
+                <div class="tab-btn" onclick="switchTab('tab-bottom')">Bottom</div>
+            </nav>
+
+            <!-- TAB 1: SETUP -->
+            <div id="tab-setup" class="tab-content active">
+                <div class="form-group">
+                    <label class="form-label">Ganesh Line</label>
+                    <input type="text" id="in-ganesh" value="|| Shri Ganeshay Namah ||" oninput="render()">
+                </div>
+                <div class="toggle-row">
+                    <span class="form-label">Show Shloka</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="check-shlok" checked onchange="render()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="form-group" id="group-shlok">
+                    <label class="form-label">Sanskrit Shloka</label>
+                    <textarea id="in-shlok" rows="2" oninput="render()">वक्रतुंड महाकाय सूर्यकोटि समप्रभः। निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Quote</label>
+                    <textarea id="in-quote" rows="2" oninput="render()">Marriage Touch settled in heaven are However arrange on the earth.</textarea>
+                </div>
+
+                <div class="form-group" style="margin-top: 20px; border-top: 1px dashed #ddd; padding-top: 10px;">
+                    <label class="form-label">Host Line (Parents)</label>
+                    <input type="text" id="in-host-parents" value="Smt. Kamla & Sh. Rajender Kumar" oninput="render()">
+                </div>
+            </div>
+
+            <!-- TAB 2: COUPLE -->
+            <div id="tab-couple" class="tab-content">
+                <div class="form-label text-center" style="margin-bottom: 10px; color: var(--primary);">GROOM</div>
+                <div class="form-group">
+                    <input type="text" id="in-groom" value="Chirag" placeholder="Name" oninput="render()">
+                </div>
+                <div class="form-group">
+                    <textarea id="in-groom-details" rows="3" placeholder="Grandparents/Parents" oninput="render()">Grand S/o Late Sh. Ram Lal</textarea>
+                </div>
+
+                <div class="form-label text-center" style="margin: 20px 0 10px; color: var(--primary); border-top:1px solid #eee; padding-top:10px;">BRIDE</div>
+                <div class="form-group">
+                    <input type="text" id="in-bride" value="Simran" placeholder="Name" oninput="render()">
+                </div>
+                <div class="form-group">
+                    <textarea id="in-bride-details" rows="3" placeholder="Parents Details" oninput="render()">D/o Smt. Sunita & Sh. Manoj Gupta</textarea>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="in-bride-addr" value="R/o Civil Lines, Jaipur" placeholder="Residence" oninput="render()">
+                </div>
+            </div>
+
+            <!-- TAB 3: EVENTS -->
+            <div id="tab-events" class="tab-content">
+                <div class="form-label">Events List</div>
+                <div id="events-container"></div>
+                <button class="btn-add" onclick="addEvent()"><i class="fa-solid fa-plus"></i> Add Event</button>
+            </div>
+
+            <!-- TAB 4: BOTTOM -->
+            <div id="tab-bottom" class="tab-content">
+                <div class="form-group">
+                    <label class="form-label">Venue Name</label>
+                    <input type="text" id="in-venue-name" value="Golden Galaxy Resort" oninput="render()">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Venue Address</label>
+                    <input type="text" id="in-venue-addr" value="GT Road, Karnal, Haryana" oninput="render()">
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label class="form-label">RSVP</label>
+                    <textarea id="in-rsvp" rows="3" oninput="render()">Darshan Lal - 9876543210
+Mukesh Kumar - 9876543210</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Compliments</label>
+                    <textarea id="in-compliments" rows="2" oninput="render()">Gupta Family & Friends</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Kids Message</label>
+                    <input type="text" id="in-kids" value="Mamu ki shadi me jalul jalul aana - Ananya" oninput="render()">
+                </div>
+            </div>
+        </aside>
+
+        <!-- Preview Area -->
+        <main id="preview-area">
+            
+            <!-- SINGLE CARD LAYOUT -->
+            <div class="shadi-card" id="main-card">
+                <div class="card-inner">
+                    <!-- Corners -->
+                    <div class="ornament tl"></div><div class="ornament tr"></div>
+                    <div class="ornament bl"></div><div class="ornament br"></div>
+
+                    <!-- Header -->
+                    <div class="section-header">
+                        <div style="font-size: 1.8rem; color: var(--gold);"><i class="fa-solid fa-om"></i></div>
+                        <div class="font-hindi text-pink" style="font-weight:700; font-size: 1.1rem;" id="out-ganesh"></div>
+                        <div class="font-hindi text-muted" style="font-size:0.8rem; margin-top:4px;" id="out-shlok"></div>
+                    </div>
+
+                    <div class="text-center font-body" style="font-style: italic; font-size: 0.85rem; color: #555; margin: 0.5rem 0;" id="out-quote"></div>
+
+                    <div class="text-center" style="margin: 1rem 0;">
+                        <div class="font-header text-gold" style="text-transform: uppercase; font-weight: bold; font-size: 0.9rem;" id="out-host-parents"></div>
+                        <div class="font-script" style="font-size: 1.3rem; color: #6b7280;">Solicit your gracious presence at the wedding of their son</div>
+                    </div>
+
+                    <!-- Couple Grid -->
+                    <div class="couple-row">
+                        <div class="couple-col">
+                            <div class="font-script text-pink" style="font-size: 2.5rem; line-height: 1.1;" id="out-groom"></div>
+                            <div class="font-body text-muted" style="white-space: pre-line; margin-top: 5px;" id="out-groom-details"></div>
+                        </div>
+                        
+                        <div class="weds-circle">Weds</div>
+
+                        <div class="couple-col">
+                            <div class="font-script text-pink" style="font-size: 2.5rem; line-height: 1.1;" id="out-bride"></div>
+                            <div class="font-body text-muted" style="white-space: pre-line; font-weight: bold; margin-top: 5px;" id="out-bride-details"></div>
+                            <div class="font-body text-muted" style="font-size: 0.75rem;" id="out-bride-addr"></div>
+                        </div>
+                    </div>
+
+                    <!-- Events Section -->
+                    <div style="flex: 1;">
+                        <div class="text-center">
+                            <h2 class="font-script text-gold" style="font-size: 2rem; margin: 0;">Golden Moments</h2>
+                        </div>
+                        
+                        <div class="events-table" id="out-events-list">
+                            <!-- Events Injected JS -->
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="text-center" style="margin-bottom: 1.5rem;">
+                        <div class="text-muted" style="text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2px;">Venue</div>
+                        <div class="font-header" style="font-size: 1.2rem; font-weight: bold; color: #111;" id="out-venue-name"></div>
+                        <div class="font-body text-muted" id="out-venue-addr"></div>
+                    </div>
+
+                    <div class="footer-grid">
+                        <div class="text-center">
+                            <strong class="text-gold" style="font-size: 0.8rem;">R.S.V.P.</strong>
+                            <div class="font-body text-muted" style="font-size: 0.75rem; white-space: pre-line; margin-top: 5px;" id="out-rsvp"></div>
+                        </div>
+                        <div class="text-center">
+                            <strong class="text-gold" style="font-size: 0.8rem;">Compliments</strong>
+                            <div class="font-body text-muted" style="font-size: 0.75rem; white-space: pre-line; margin-top: 5px;" id="out-compliments"></div>
+                        </div>
+                    </div>
+
+                    <div class="text-center" style="margin-top: 1rem; transform: rotate(-1deg);">
+                        <span class="font-script text-pink" style="font-size: 1.1rem;" id="out-kids"></span>
+                    </div>
+
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Hidden input for file loading; Notice onchange is updated to handleFileLoad -->
+    <input type="file" id="file-input" style="display: none;" accept="application/json" onchange="handleFileLoad(this)">
+
+    <!-- Main Logic -->
+    <script src="script.js"></script>
+</body>
+</html>
+
+
